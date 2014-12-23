@@ -14,20 +14,7 @@ class Menu
 
   def items_for_target_price(price)
     target = (price.to_f * 100).to_i
-    these_items = items.dup
-    found = false
-    results = nil
-
-    while !found && !these_items.empty?
-      puts "Finding a solution from #{these_items.count} items"
-      results = price_match(these_items.dup, target)
-      puts " Found: #{results.inspect}"
-      if results
-        found = true
-      else
-        these_items.shift
-      end
-    end
+    results = price_match(items.dup, target)
 
     return results || "No Solution!"
   end
@@ -41,7 +28,7 @@ private
     item = these_items.shift
     remainder = price - item.price
 
-    # if item price matches price, return item
+    # if item price matches price, return item and the solution is found
     return [item] if remainder == 0
 
     # if item price is too big, try from the next one
@@ -50,7 +37,6 @@ private
     # if item price is smaller than price...
     #   1. this item is in solution, find a solution using the remaining items and remainder
     #   2. this item is not in solution, find a solution using remaining items and price
-    #   3. there is no solution
 
     results = price_match(these_items.dup, remainder)
     if results
