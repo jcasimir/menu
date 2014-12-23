@@ -35,32 +35,28 @@ class Menu
 private
 
   def price_match(these_items, price)
+    # if these_items is empty, fail
     return nil if these_items.empty?
 
     item = these_items.shift
     remainder = price - item.price
 
-    if remainder == 0
-      # Found a perfect match
-      return [item]
-    elsif remainder > 0
-      # Found a potential match
-      remaining = these_items.dup
-      found = nil
-      until found || remaining.empty?
-        results = price_match(remaining, remainder)
-        if results
-          found = true
-          return [item] + results
-        else
-          remaining.shift
-        end
-      end
+    # if item price matches price, return item
+    return [item] if remainder == 0
 
-      return nil
+    # if item price is too big, try from the next one
+    return price_match(these_items, price) if remainder < 0
+
+    # if item price is smaller than price...
+    #   1. this item is in solution, find a solution using the remaining items and remainder
+    #   2. this item is not in solution, find a solution using remaining items and price
+    #   3. there is no solution
+
+    results = price_match(these_items.dup, remainder)
+    if results
+      return [item] + results
     else
-      # Top item is too large, trash it
-      return price_match(these_items, remainder)
+      return price_match(these_items.dup, price)
     end
   end
 
